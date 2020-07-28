@@ -11,6 +11,22 @@ const deleteProduct = (id) => {
   });
   return destroyProduct;
 };
+const deleteProductByCate = (id) => {
+  const destroyProduct = models.product.destroy({
+    where: {
+      cate_id: id,
+    },
+  });
+  return destroyProduct;
+};
+const getProductByCate = id =>{
+  const data = models.product.findAll({
+    where:{
+      cate_id:id
+    }
+  })
+  return data;
+}
 const getProductById = (id) => {
   const dataById = models.product.findAll({
     where: {
@@ -39,5 +55,7 @@ module.exports = {
   deleteProduct: deleteProduct,
   getProductById: getProductById,
   insertProduct: insertProduct,
-  updateProduct:updateProduct
+  updateProduct:updateProduct,
+  deleteProductByCate:deleteProductByCate,
+  getProductByCate:getProductByCate
 };

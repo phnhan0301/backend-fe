@@ -22,19 +22,19 @@ router.post("/cate", async (req, res) => {
 router.get("/cate/:id", async (req, res) => {
   const { id } = req.params;
   const data = await category.getCateById(id);
-  if (data) {
+  if (data.length>0) {
     return res.json({ data: data });
   } else {
-    return req.json({
+    return res.json({
       messages: "Không tìm thấy dữ liệu",
     });
   }
 });
 router.post("/updateCate", async (req, res) => {
-  const { name, id } = req.body;
-  const data = await category.updateCate(id, name);
+  const {name,id } = req.body;
+  const result = await category.updateCate(id,name);
   if (result) {
-    return res.json({ data: data });
+    return res.json({ data: result });
   } else {
     return res.json({
       messages: "Cập nhật thất bại!",
@@ -45,6 +45,7 @@ router.get("/deleteCategory/:id", async (req, res) => {
   const { id } = req.params;
   const result = await category.deleteCate(id);
   if (result) {
+    await product.deleteProductByCate(id);
     return res.json({ data: result });
   } else {
     return res.json({
@@ -80,7 +81,7 @@ router.get("/product/:id", async (req, res) => {
   }
 });
 router.post("/product", async (req, res) => {
-  const { name, price, details, amount, sale, cate_id } = req.body;
+  console.log(req.body.images)
   var filename = "";
   let diskStogare = multer.diskStorage({
     destination: (req, res, callback) => {
@@ -90,15 +91,16 @@ router.post("/product", async (req, res) => {
       let math = ["image/png", "image/jpg", "image/jpeg"];
       if (math.indexOf(file.mimetype) == -1) {
         var err = {
-          err: "Chỉ được upload ảnh đuôi png, jpg, jpeg !",
+          err: "Chỉ được upload ảnh đuôi png, jpg, jpeg !"
         };
-        return res.json({ messages: err });
+        res.render("admin/productAdd", { err: err });
       }
       filename = `${Date.now()}-product-${file.originalname}`;
       callback(null, filename);
-    },
+    }
   });
-  let uploadFile = multer({ storage: diskStogare }).single("files");
+  let uploadFile = multer({ storage: diskStogare }).single("images");
+  const { name, price, details, amount, sale, cate_id } = req.body;
   uploadFile(req, res, (err) => {
     if (err) {
       console.log(err);
