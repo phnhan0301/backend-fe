@@ -1,7 +1,14 @@
 let models = require("../models");
 const getProduct = () => {
-  const dataProduct = models.product.findAll();
+ try {
+  const dataProduct = models.product.findAll({
+    include:[{model:models.category,as:"cate",attributes:['name']}]
+  });
   return dataProduct;
+ } catch (error) {
+   console.log('anh');
+ }
+  
 };
 const deleteProduct = (id) => {
   const destroyProduct = models.product.destroy({
@@ -23,7 +30,7 @@ const getProductByCate = id =>{
   const data = models.product.findAll({
     where:{
       cate_id:id
-    }
+    },
   })
   return data;
 }
@@ -32,6 +39,7 @@ const getProductById = (id) => {
     where: {
       id: id,
     },
+    include:[{model:models.category,as:"cate",attributes:['name']}]
   });
   return dataById;
 };

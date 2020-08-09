@@ -5,10 +5,9 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 
 var logger = require('morgan');
-
+const session = require('express-session');
 var indexRouter = require('./routes/index');
 var adminRouter = require('./routes/admin');
-
 var app = express();
 app.use(cors({
   'allowedHeaders': ['sessionId', 'Content-Type'],
@@ -17,11 +16,18 @@ app.use(cors({
   'methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
   'preflightContinue': false
 }));
+app.use(session({
+  resave:true,
+  secret:'somescret',
+  saveUninitialized:true,
+  cookie:{maxAge:60000}
+}))
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('uploads'))
 
 app.use('/', indexRouter);
 app.use('/admin', adminRouter);

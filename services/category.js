@@ -1,6 +1,6 @@
 let models = require("../models");
 const getCate = () => {
-  const dataCate = models.category.findAll();
+  const dataCate = models.category.findAndCountAll();
   return dataCate;
 };
 const insertCate = (data) => {

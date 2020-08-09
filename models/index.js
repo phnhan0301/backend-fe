@@ -33,5 +33,24 @@ Object.keys(db).forEach(modelName => {
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
-
+db.category = require("./category")(sequelize,Sequelize);
+db.product = require("./product")(sequelize,Sequelize);
+db.category.hasMany(db.product,{as:"product",foreignKey:'cate_id'});
+db.product.belongsTo(db.category,{
+  foreignKey:"cate_id",
+  as:"cate"
+})
+db.categoryPost = require("./categorypost")(sequelize,Sequelize);
+db.post = require("./post")(sequelize,Sequelize);
+db.user = require("./user")(sequelize,Sequelize);
+db.categoryPost.hasMany(db.post,{foreignKey:'cate_id'});
+db.post.belongsTo(db.categoryPost,{
+  foreignKey:"cate_id",
+  as:"cate"
+})
+db.user.hasMany(db.post,{foreignKey:'user'});
+db.post.belongsTo(db.user,{
+  foreignKey:"user",
+  as:"users"
+})
 module.exports = db;
